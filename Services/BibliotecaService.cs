@@ -9,21 +9,87 @@ public class BibliotecaService
 
     public void RegistrarLibro(Libro libro)
     {
+        if (string.IsNullOrWhiteSpace(libro.Titulo))
+        {
+            throw new ArgumentException("El título del libro es obligatorio.");
+        }
+
+        if (string.IsNullOrWhiteSpace(libro.Autor))
+        {
+            throw new ArgumentException("El autor del libro es obligatorio.");
+        }
+
+        if (string.IsNullOrWhiteSpace(libro.Codigo))
+        {
+            throw new ArgumentException("El código del libro es obligatorio.");
+        }
+
+        Libro? libroExistente = libros.FirstOrDefault(
+            libroGuardado =>
+                libroGuardado.Codigo.Equals(
+                    libro.Codigo,
+                    StringComparison.OrdinalIgnoreCase
+                )
+        );
+
+        if (libroExistente != null)
+        {
+            throw new InvalidOperationException(
+                $"Ya existe un libro con el código {libro.Codigo}."
+            );
+        }
+
         libros.Add(libro);
     }
 
     public void RegistrarUsuario(Usuario usuario)
     {
+        if (string.IsNullOrWhiteSpace(usuario.Identificador))
+        {
+            throw new ArgumentException(
+                "El identificador del usuario es obligatorio."
+            );
+        }
+
+        if (string.IsNullOrWhiteSpace(usuario.Nombre))
+        {
+            throw new ArgumentException(
+                "El nombre del usuario es obligatorio."
+            );
+        }
+
+        if (string.IsNullOrWhiteSpace(usuario.Correo))
+        {
+            throw new ArgumentException(
+                "El correo del usuario es obligatorio."
+            );
+        }
+
+        Usuario? usuarioExistente = usuarios.FirstOrDefault(
+            usuarioGuardado =>
+                usuarioGuardado.Identificador.Equals(
+                    usuario.Identificador,
+                    StringComparison.OrdinalIgnoreCase //mayusMinus
+                )
+        );
+
+        if (usuarioExistente != null)
+        {
+            throw new InvalidOperationException(
+                $"Ya existe un usuario con el identificador {usuario.Identificador}."
+            );
+        }
+
         usuarios.Add(usuario);
     }
 
     public List<Libro> ObtenerLibros()
     {
-        return libros;
+        return libros.ToList();
     }
 
     public List<Usuario> ObtenerUsuarios()
     {
-        return usuarios;
+        return usuarios.ToList();
     }
 }
