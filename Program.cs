@@ -1,5 +1,8 @@
 ﻿using SistemaBiblioteca.Models;
 
+List<Libro> libros = new List<Libro>();
+//List<Libro> libros = new();
+
 Console.WriteLine("=================================");
 Console.WriteLine("SISTEMA DE GESTIÓN DE BIBLIOTECA");
 Console.WriteLine("=================================");
@@ -28,3 +31,20 @@ Console.WriteLine();
 Console.WriteLine($"Usuario: {usuarioPrueba.Nombre}");
 Console.WriteLine($"ID: {usuarioPrueba.Identificador}");
 Console.WriteLine($"Correo: {usuarioPrueba.Correo}");
+
+libros.Add(libroPrueba);
+
+Libro segundoLibro = new Libro(
+    "1984",
+    "George Orwell",
+    "Distopía",
+    "LIB002",
+    true
+);
+
+libros.Add(segundoLibro);
+
+foreach (Libro libro in libros)
+{
+    Console.WriteLine($"{libro.Codigo} - {libro.Titulo}");
+}
