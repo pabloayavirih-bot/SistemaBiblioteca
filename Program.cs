@@ -1,13 +1,15 @@
 ﻿using SistemaBiblioteca.Models;
-
-List<Libro> libros = new List<Libro>();
-//List<Libro> libros = new();
+using SistemaBiblioteca.Services;
 
 Console.WriteLine("=================================");
 Console.WriteLine("SISTEMA DE GESTIÓN DE BIBLIOTECA");
 Console.WriteLine("=================================");
 
-Libro libroPrueba = new Libro(
+
+
+BibliotecaService biblioteca = new BibliotecaService();
+
+Libro libro1 = new Libro(
     "El Principito",
     "Antoine de Saint-Exupéry",
     "Novela",
@@ -15,26 +17,7 @@ Libro libroPrueba = new Libro(
     true
 );
 
-Console.WriteLine();
-Console.WriteLine($"Título: {libroPrueba.Titulo}");
-Console.WriteLine($"Autor: {libroPrueba.Autor}");
-Console.WriteLine($"Código: {libroPrueba.Codigo}");
-Console.WriteLine($"Disponible: {libroPrueba.Disponible}");
-
-Usuario usuarioPrueba = new Usuario(
-    "USR001",
-    "Pablo Ayaviri",
-    "pablo@email.com"
-);
-
-Console.WriteLine();
-Console.WriteLine($"Usuario: {usuarioPrueba.Nombre}");
-Console.WriteLine($"ID: {usuarioPrueba.Identificador}");
-Console.WriteLine($"Correo: {usuarioPrueba.Correo}");
-
-libros.Add(libroPrueba);
-
-Libro segundoLibro = new Libro(
+Libro libro2 = new Libro(
     "1984",
     "George Orwell",
     "Distopía",
@@ -42,9 +25,10 @@ Libro segundoLibro = new Libro(
     true
 );
 
-libros.Add(segundoLibro);
+biblioteca.RegistrarLibro(libro1);
+biblioteca.RegistrarLibro(libro2);
 
-foreach (Libro libro in libros)
+foreach (Libro libro in biblioteca.ObtenerLibros())
 {
     Console.WriteLine($"{libro.Codigo} - {libro.Titulo}");
 }
