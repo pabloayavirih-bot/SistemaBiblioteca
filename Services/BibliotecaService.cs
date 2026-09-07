@@ -8,6 +8,7 @@ public class BibliotecaService
     private List<Usuario> usuarios = new List<Usuario>();
     private List<Prestamo> prestamos = new List<Prestamo>();
 
+
     public void RegistrarLibro(Libro libro)
     {
         if (string.IsNullOrWhiteSpace(libro.Titulo))
@@ -48,6 +49,7 @@ public class BibliotecaService
 
         libros.Add(libro);
     }
+
 
     public void RegistrarUsuario(Usuario usuario)
     {
@@ -90,15 +92,18 @@ public class BibliotecaService
         usuarios.Add(usuario);
     }
 
+
     public List<Libro> ObtenerLibros()
     {
         return libros.ToList();
     }
 
+
     public List<Usuario> ObtenerUsuarios()
     {
         return usuarios.ToList();
     }
+
 
     public Libro? BuscarLibroPorCodigo(string codigo)
     {
@@ -118,6 +123,7 @@ public class BibliotecaService
         );
     }
 
+
     public void EliminarLibro(string codigo)
     {
         Libro? libroEncontrado = BuscarLibroPorCodigo(codigo);
@@ -132,6 +138,7 @@ public class BibliotecaService
         libros.Remove(libroEncontrado);
     }
 
+
     public void PrestarLibro(string codigoLibro)
     {
         Libro? libro = BuscarLibroPorCodigo(codigoLibro);
@@ -145,6 +152,8 @@ public class BibliotecaService
 
         libro.Prestar();
     }
+
+
     public void DevolverLibro(string codigoLibro)
     {
         Libro? libro = BuscarLibroPorCodigo(codigoLibro);
@@ -159,9 +168,10 @@ public class BibliotecaService
         libro.Devolver();
     }
 
+
     public void RegistrarPrestamo(
-    string codigoLibro,
-    string identificadorUsuario)
+        string codigoLibro,
+        string identificadorUsuario)
     {
         Libro? libro = BuscarLibroPorCodigo(codigoLibro);
 
@@ -204,6 +214,7 @@ public class BibliotecaService
         prestamos.Add(nuevoPrestamo);
     }
 
+
     public void RegistrarDevolucion(string codigoLibro)
     {
         Prestamo? prestamo = prestamos.FirstOrDefault(
@@ -239,11 +250,10 @@ public class BibliotecaService
         libro.Devolver();
 
 
-        Prestamo prestamoDevuelto =
-            prestamo with
-            {
-                FechaDevolucion = DateTime.Now
-            };
+        Prestamo prestamoDevuelto = prestamo with
+        {
+            FechaDevolucion = DateTime.Now
+        };
 
 
         prestamos.Remove(prestamo);
@@ -251,11 +261,56 @@ public class BibliotecaService
         prestamos.Add(prestamoDevuelto);
     }
 
+
     public List<Prestamo> ObtenerPrestamosActivos()
     {
         return prestamos
             .Where(prestamo => prestamo.Activo)
             .ToList();
     }
-}
 
+
+    public List<Libro> ObtenerLibrosDisponibles()
+    {
+        return libros
+            .Where(libro => libro.Disponible)
+            .ToList();
+    }
+
+
+    public List<Libro> BuscarLibros(string texto)
+    {
+        return libros
+            .Where(libro =>
+                libro.Autor.Contains(
+                    texto,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                ||
+                libro.Categoria.Contains(
+                    texto,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+            .ToList();
+    }
+
+
+    public List<Libro> ObtenerLibrosOrdenados()
+    {
+        return libros
+            .OrderBy(libro => libro.Titulo)
+            .ToList();
+    }
+
+
+    public List<string> ObtenerResumenPrestamos()
+    {
+        return prestamos
+            .Where(prestamo => prestamo.Activo)
+            .Select(prestamo =>
+                $"Libro: {prestamo.CodigoLibro} | Usuario: {prestamo.IdentificadorUsuario}"
+            )
+            .ToList();
+    }
+}
