@@ -130,4 +130,33 @@ public class BibliotecaService
 
         libros.Remove(libroEncontrado);
     }
+
+    public void PrestarLibro(string codigoLibro)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+        libro.Prestar();
+    }
+    public void DevolverLibro(string codigoLibro)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+        libro.Devolver();
+    }
+
 }
+

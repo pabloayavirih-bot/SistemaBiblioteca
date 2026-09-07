@@ -177,7 +177,34 @@ while (continuar)
                 );
 
                 break;
+            
+            case "6":
 
+                Console.Write("Código del libro: ");
+                string codigoPrestamo =
+                    Console.ReadLine() ?? "";
+
+                biblioteca.PrestarLibro(codigoPrestamo);
+
+                Console.WriteLine(
+                    "Libro prestado correctamente."
+                );
+
+                break;
+
+            case "7":
+
+                Console.Write("Código del libro: ");
+                string codigoDevolucion =
+                    Console.ReadLine() ?? "";
+
+                biblioteca.DevolverLibro(codigoDevolucion);
+
+                Console.WriteLine(
+                    "Libro devuelto correctamente."
+                );
+
+                break;
             case "0":
                 continuar = false;
 
