@@ -1,1 +1,3 @@
-﻿Console.WriteLine("Hello, World!");
+﻿Console.WriteLine("================================");
+Console.WriteLine("SISTEMA DE GESTIÓN DE BIBLIOTECA");
+Console.WriteLine("================================");
