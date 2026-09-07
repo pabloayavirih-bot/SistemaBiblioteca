@@ -16,6 +16,9 @@ while (continuar)
     Console.WriteLine("3. Listar libros");
     Console.WriteLine("4. Buscar libro");
     Console.WriteLine("5. Eliminar libro");
+    Console.WriteLine("6. Prestar libro");
+    Console.WriteLine("7. Devolver libro");
+    Console.WriteLine("8. Ver préstamos activos");
     Console.WriteLine("0. Salir");
     Console.Write("Seleccione una opción: ");
 
@@ -180,29 +183,79 @@ while (continuar)
             
             case "6":
 
+                Console.WriteLine();
+                Console.WriteLine("--- REGISTRAR PRÉSTAMO ---");
+
                 Console.Write("Código del libro: ");
-                string codigoPrestamo =
+                string codigoLibro =
                     Console.ReadLine() ?? "";
 
-                biblioteca.PrestarLibro(codigoPrestamo);
+
+                Console.Write("Identificador usuario: ");
+                string identificadorUsuario =
+                    Console.ReadLine() ?? "";
+
+
+                biblioteca.RegistrarPrestamo(
+                    codigoLibro,
+                    identificadorUsuario
+                );
+
 
                 Console.WriteLine(
-                    "Libro prestado correctamente."
+                    "Préstamo registrado correctamente."
                 );
 
                 break;
-
             case "7":
 
+                Console.WriteLine();
+                Console.WriteLine("--- DEVOLVER LIBRO ---");
+
                 Console.Write("Código del libro: ");
-                string codigoDevolucion =
+                string codigoDevolver =
                     Console.ReadLine() ?? "";
 
-                biblioteca.DevolverLibro(codigoDevolucion);
+
+                biblioteca.RegistrarDevolucion(
+                    codigoDevolver
+                );
+
 
                 Console.WriteLine(
                     "Libro devuelto correctamente."
                 );
+
+                break;
+
+            case "8":
+
+                Console.WriteLine();
+                Console.WriteLine("--- PRÉSTAMOS ACTIVOS ---");
+
+
+                List<Prestamo> prestamosActivos =
+                    biblioteca.ObtenerPrestamosActivos();
+
+
+                if (prestamosActivos.Count == 0)
+                {
+                    Console.WriteLine(
+                        "No existen préstamos activos."
+                    );
+                }
+                else
+                {
+                    foreach (Prestamo prestamo in prestamosActivos)
+                    {
+                        Console.WriteLine(
+                            $"Libro: {prestamo.CodigoLibro} | " +
+                            $"Usuario: {prestamo.IdentificadorUsuario} | " +
+                            $"Fecha: {prestamo.FechaPrestamo}"
+                        );
+                    }
+                }
+
 
                 break;
             case "0":

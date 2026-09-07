@@ -6,6 +6,7 @@ public class BibliotecaService
 {
     private List<Libro> libros = new List<Libro>();
     private List<Usuario> usuarios = new List<Usuario>();
+    private List<Prestamo> prestamos = new List<Prestamo>();
 
     public void RegistrarLibro(Libro libro)
     {
@@ -158,5 +159,103 @@ public class BibliotecaService
         libro.Devolver();
     }
 
+    public void RegistrarPrestamo(
+    string codigoLibro,
+    string identificadorUsuario)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+
+        Usuario? usuario = usuarios.FirstOrDefault(
+            usuarioGuardado =>
+                usuarioGuardado.Identificador.Equals(
+                    identificadorUsuario,
+                    StringComparison.OrdinalIgnoreCase
+                )
+        );
+
+
+        if (usuario == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el usuario solicitado."
+            );
+        }
+
+
+        libro.Prestar();
+
+
+        Prestamo nuevoPrestamo = new Prestamo(
+            libro.Codigo,
+            usuario.Identificador,
+            DateTime.Now,
+            null
+        );
+
+
+        prestamos.Add(nuevoPrestamo);
+    }
+
+    public void RegistrarDevolucion(string codigoLibro)
+    {
+        Prestamo? prestamo = prestamos.FirstOrDefault(
+            prestamoActivo =>
+                prestamoActivo.CodigoLibro.Equals(
+                    codigoLibro,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                &&
+                prestamoActivo.Activo
+        );
+
+
+        if (prestamo == null)
+        {
+            throw new InvalidOperationException(
+                "No existe un préstamo activo para ese libro."
+            );
+        }
+
+
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "El libro no existe."
+            );
+        }
+
+
+        libro.Devolver();
+
+
+        Prestamo prestamoDevuelto =
+            prestamo with
+            {
+                FechaDevolucion = DateTime.Now
+            };
+
+
+        prestamos.Remove(prestamo);
+
+        prestamos.Add(prestamoDevuelto);
+    }
+
+    public List<Prestamo> ObtenerPrestamosActivos()
+    {
+        return prestamos
+            .Where(prestamo => prestamo.Activo)
+            .ToList();
+    }
 }
 
