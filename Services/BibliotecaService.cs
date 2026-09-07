@@ -6,6 +6,8 @@ public class BibliotecaService
 {
     private List<Libro> libros = new List<Libro>();
     private List<Usuario> usuarios = new List<Usuario>();
+    private List<Prestamo> prestamos = new List<Prestamo>();
+
 
     public void RegistrarLibro(Libro libro)
     {
@@ -48,6 +50,7 @@ public class BibliotecaService
         libros.Add(libro);
     }
 
+
     public void RegistrarUsuario(Usuario usuario)
     {
         if (string.IsNullOrWhiteSpace(usuario.Identificador))
@@ -89,15 +92,18 @@ public class BibliotecaService
         usuarios.Add(usuario);
     }
 
+
     public List<Libro> ObtenerLibros()
     {
         return libros.ToList();
     }
 
+
     public List<Usuario> ObtenerUsuarios()
     {
         return usuarios.ToList();
     }
+
 
     public Libro? BuscarLibroPorCodigo(string codigo)
     {
@@ -117,6 +123,7 @@ public class BibliotecaService
         );
     }
 
+
     public void EliminarLibro(string codigo)
     {
         Libro? libroEncontrado = BuscarLibroPorCodigo(codigo);
@@ -129,5 +136,181 @@ public class BibliotecaService
         }
 
         libros.Remove(libroEncontrado);
+    }
+
+
+    public void PrestarLibro(string codigoLibro)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+        libro.Prestar();
+    }
+
+
+    public void DevolverLibro(string codigoLibro)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+        libro.Devolver();
+    }
+
+
+    public void RegistrarPrestamo(
+        string codigoLibro,
+        string identificadorUsuario)
+    {
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el libro solicitado."
+            );
+        }
+
+
+        Usuario? usuario = usuarios.FirstOrDefault(
+            usuarioGuardado =>
+                usuarioGuardado.Identificador.Equals(
+                    identificadorUsuario,
+                    StringComparison.OrdinalIgnoreCase
+                )
+        );
+
+
+        if (usuario == null)
+        {
+            throw new InvalidOperationException(
+                "No existe el usuario solicitado."
+            );
+        }
+
+
+        libro.Prestar();
+
+
+        Prestamo nuevoPrestamo = new Prestamo(
+            libro.Codigo,
+            usuario.Identificador,
+            DateTime.Now,
+            null
+        );
+
+
+        prestamos.Add(nuevoPrestamo);
+    }
+
+
+    public void RegistrarDevolucion(string codigoLibro)
+    {
+        Prestamo? prestamo = prestamos.FirstOrDefault(
+            prestamoActivo =>
+                prestamoActivo.CodigoLibro.Equals(
+                    codigoLibro,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                &&
+                prestamoActivo.Activo
+        );
+
+
+        if (prestamo == null)
+        {
+            throw new InvalidOperationException(
+                "No existe un préstamo activo para ese libro."
+            );
+        }
+
+
+        Libro? libro = BuscarLibroPorCodigo(codigoLibro);
+
+
+        if (libro == null)
+        {
+            throw new InvalidOperationException(
+                "El libro no existe."
+            );
+        }
+
+
+        libro.Devolver();
+
+
+        Prestamo prestamoDevuelto = prestamo with
+        {
+            FechaDevolucion = DateTime.Now
+        };
+
+
+        prestamos.Remove(prestamo);
+
+        prestamos.Add(prestamoDevuelto);
+    }
+
+
+    public List<Prestamo> ObtenerPrestamosActivos()
+    {
+        return prestamos
+            .Where(prestamo => prestamo.Activo)
+            .ToList();
+    }
+
+
+    public List<Libro> ObtenerLibrosDisponibles()
+    {
+        return libros
+            .Where(libro => libro.Disponible)
+            .ToList();
+    }
+
+
+    public List<Libro> BuscarLibros(string texto)
+    {
+        return libros
+            .Where(libro =>
+                libro.Autor.Contains(
+                    texto,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                ||
+                libro.Categoria.Contains(
+                    texto,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+            .ToList();
+    }
+
+
+    public List<Libro> ObtenerLibrosOrdenados()
+    {
+        return libros
+            .OrderBy(libro => libro.Titulo)
+            .ToList();
+    }
+
+
+    public List<string> ObtenerResumenPrestamos()
+    {
+        return prestamos
+            .Where(prestamo => prestamo.Activo)
+            .Select(prestamo =>
+                $"Libro: {prestamo.CodigoLibro} | Usuario: {prestamo.IdentificadorUsuario}"
+            )
+            .ToList();
     }
 }
