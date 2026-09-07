@@ -11,17 +11,23 @@ public class BibliotecaService
     {
         if (string.IsNullOrWhiteSpace(libro.Titulo))
         {
-            throw new ArgumentException("El título del libro es obligatorio.");
+            throw new ArgumentException(
+                "El título del libro es obligatorio."
+            );
         }
 
         if (string.IsNullOrWhiteSpace(libro.Autor))
         {
-            throw new ArgumentException("El autor del libro es obligatorio.");
+            throw new ArgumentException(
+                "El autor del libro es obligatorio."
+            );
         }
 
         if (string.IsNullOrWhiteSpace(libro.Codigo))
         {
-            throw new ArgumentException("El código del libro es obligatorio.");
+            throw new ArgumentException(
+                "El código del libro es obligatorio."
+            );
         }
 
         Libro? libroExistente = libros.FirstOrDefault(
@@ -69,7 +75,7 @@ public class BibliotecaService
             usuarioGuardado =>
                 usuarioGuardado.Identificador.Equals(
                     usuario.Identificador,
-                    StringComparison.OrdinalIgnoreCase //mayusMinus
+                    StringComparison.OrdinalIgnoreCase
                 )
         );
 
@@ -91,5 +97,37 @@ public class BibliotecaService
     public List<Usuario> ObtenerUsuarios()
     {
         return usuarios.ToList();
+    }
+
+    public Libro? BuscarLibroPorCodigo(string codigo)
+    {
+        if (string.IsNullOrWhiteSpace(codigo))
+        {
+            throw new ArgumentException(
+                "Debe ingresar un código para realizar la búsqueda."
+            );
+        }
+
+        return libros.FirstOrDefault(
+            libro =>
+                libro.Codigo.Equals(
+                    codigo,
+                    StringComparison.OrdinalIgnoreCase
+                )
+        );
+    }
+
+    public void EliminarLibro(string codigo)
+    {
+        Libro? libroEncontrado = BuscarLibroPorCodigo(codigo);
+
+        if (libroEncontrado == null)
+        {
+            throw new InvalidOperationException(
+                $"No existe un libro con el código {codigo}."
+            );
+        }
+
+        libros.Remove(libroEncontrado);
     }
 }
