@@ -17,3 +17,14 @@ Console.WriteLine($"Título: {libroPrueba.Titulo}");
 Console.WriteLine($"Autor: {libroPrueba.Autor}");
 Console.WriteLine($"Código: {libroPrueba.Codigo}");
 Console.WriteLine($"Disponible: {libroPrueba.Disponible}");
+
+Usuario usuarioPrueba = new Usuario(
+    "USR001",
+    "Pablo Ayaviri",
+    "pablo@email.com"
+);
+
+Console.WriteLine();
+Console.WriteLine($"Usuario: {usuarioPrueba.Nombre}");
+Console.WriteLine($"ID: {usuarioPrueba.Identificador}");
+Console.WriteLine($"Correo: {usuarioPrueba.Correo}");
